@@ -1,0 +1,135 @@
+<!--在页面中展现一颗二叉树的结构-->
+<!--提供一个按钮，显示开始遍历，点击后，以动画的形式呈现遍历的过程-->
+<!--二叉树的遍历算法和方式自定，前序中序后序皆可，但推荐可以提供多种算法的展示（增加多个按钮，每个按钮对应不同的算法）-->
+<!--当前被遍历到的节点做一个特殊显示（比如不同的颜色）-->
+<!--每隔一段时间（500ms，1s等时间自定）再遍历下一个节点-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>treeBuild_js</title>
+    <style type="text/css">
+        .wrap{
+            display: flex;
+        }
+        .node{
+            margin: 10px;
+            min-height: 20px;
+            min-width: 40px;
+            display: flex;
+            border: 1px solid black;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="node" id="1">
+        <div class="node" id="2">
+            <div class="node" id="4">
+                <div class="node" id="8"></div>
+                <div class="node" id="9"></div>
+            </div>
+            <div class="node" id="5">
+                <div class="node" id="10"></div>
+                <div class="node" id="11"></div>
+            </div>
+        </div>
+        <div class="node" id="3">
+            <div class="node" id="6">
+                <div class="node" id="12"></div>
+                <div class="node" id="13"></div>
+            </div>
+            <div class="node" id="7">
+                <div class="node" id="14"></div>
+                <div class="node" id="15"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="button">
+    <button id="before">前序遍历</button>
+    <button id="middle">中序遍历</button>
+    <button id="after">后序遍历</button>
+</div>
+    <script >
+        //html中获得数据
+        var wrap = document.querySelector(".wrap");
+        var btnLeft=document.getElementById('before');
+        var btnMiddle=document.getElementById('middle');
+        var btnRight=document.getElementById('after');
+        var last;
+        var toggle=false;
+        var arr=[];
+        //遍历
+        //前序遍历
+        function preOrder(node) {
+            if (node){
+                arr.push(node);
+                preOrder(node.firstElementChild);
+                preOrder(node.lastElementChild);
+            }
+        }
+        function midOrder(node) {
+            if (node){
+                preOrder(node.firstElementChild);
+                arr.push(node);
+                preOrder(node.lastElementChild);
+            }
+        }
+        function aftOrder(node) {
+            if (node){
+                preOrder(node.firstElementChild);
+                preOrder(node.lastElementChild);
+                arr.push(node);
+            }
+        }
+        //变色
+
+        function show(){
+            for(var i=1; i<arr.length; i++){
+                setTimeout(function(i){
+                    return function(){
+                        if(i === arr.length-1){
+                            toggle = false;
+                            //某次遍历结束，初始化toggle，防止用户在遍历过程中再次点击遍历
+                        }
+                        if(last){
+                            last.style.background = "#fff"; //使上一次遍历的内容初始化为白色
+                        }
+                        arr[i].style.background = "#f00";
+                        last = arr[i];
+                    }
+                }(i),i*700);
+            }
+        }
+        //绑定按钮
+        btnLeft.onclick=function(){
+            toggle=true;
+            reset();
+            preOrder(wrap);
+            show();
+        };
+        btnMiddle.onclick=function(){
+            toggle=true;
+            reset();
+            midOrder(wrap);
+            show();
+        };
+        btnRight.onclick=function(){
+            toggle=true;
+            reset();
+            aftOrder(wrap);
+            show();
+        };
+
+        function reset(){
+                     arr = [];
+                         if (!last) {
+                         } else {
+                             last.setAttribute("style", "background:white;");
+                         }
+                     }
+    </script>
+</body>
+</html>

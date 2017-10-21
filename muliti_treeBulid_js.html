@@ -1,0 +1,192 @@
+<!--1.将二叉树变成了多叉树，并且每一个节点中带有内容-->
+<!--2.增加一个输入框及一个“查询”按钮，点击按钮时，开始在树中以动画形式查找节点内容和输入框中内容一致的节点，找到后以特殊样式显示该节点，找不到的话给出找不到的提示。-->
+<!--查询过程中的展示过程和遍历过程保持一致-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>treeBuild_js</title>
+    <style type="text/css">
+        .wrap{
+            display: flex;
+        }
+        .node{
+            margin: 10px;
+            min-height: 20px;
+            min-width: 40px;
+            display: flex;
+            border: 1px solid black;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="node" id="ALL">1
+        <div class="node" id="2">2
+            <div class="node" id="5">5
+                <div class="node" id="10">10</div>
+                <div class="node" id="11">11</div>
+                <div class="node" id="12">12</div>
+                <div class="node" id="13">13</div>
+            </div>
+            <div class="node" id="6">6</div>
+            <div class="node" id="7">7
+                <div class="node" id="14">14</div>
+                <div class="node" id="15">15</div>
+            </div>
+        </div>
+        <div class="node" id="3">3
+            <div class="node" id="8">8
+                <div class="node" id="16">16</div>
+                <div class="node" id="17">17</div>
+                <div class="node" id="18">18</div>
+            </div>
+            <div class="node" id="9">9
+                <div class="node" id="19">19
+                    <div class="node" id="21">21</div>
+                </div>
+                <div class="node" id="20">20</div>
+            </div>
+        </div>
+        <div class="node" id="4">4</div>
+    </div>
+</div>
+<div class="button">
+    <button id="before">前序遍历</button>
+</div>
+<div class="search">
+    <label>
+        <input id=search placeholder="输入想要查找的数据"/>
+    </label>
+    <button id="sort-btn">查找</button>
+</div>
+<div class="change">
+    <label>
+        <input id=inter placeholder="输入想要插入的数据"/>
+    </label>
+    <button id="inter-btn">插入</button>
+    <button id="delete-btn">删除</button>
+</div>
+<script >
+    //html中获得数据
+    var wrap = document.querySelector(".wrap");
+    var div=document.getElementsByTagName("div");
+    var node=document.createElement("div");
+    var btnLeft=document.getElementById('before');
+    var btnSort=document.getElementById("sort-btn");
+    var btnInter=document.getElementById("inter-btn");
+    var btnDelete=document.getElementById("delete-btn");
+    var input=document.getElementById("search");
+    var inter=document.getElementById("inter");
+    var last;
+    var toggle=false;
+    var arr=[];
+    //遍历
+    //前序遍历
+    function preOrder(node) {
+        if (node){
+            arr.push(node);
+            for(var i=0;i<node.children.length;i++){
+                preOrder(node.children[i]);
+            }
+        }
+    }
+    //变色
+
+    function show(){
+        for(var i=1; i<arr.length; i++){
+            setTimeout(function(i){
+                return function(){
+                    if(i === arr.length-1){
+                        //某次遍历结束，初始化toggle，防止用户在遍历过程中再次点击遍历
+                        arr[i].style.background = "#fff";
+                        toggle = false;
+                    }
+                    if(last){
+                        last.style.background = "#fff"; //使上一次遍历的内容初始化为白色
+                    }
+                    arr[i].style.background = "#f00";
+                    last = arr[i];
+                }
+            }(i),i*700);
+        }
+    }
+    //查找
+    btnSort.onclick=function(){
+ //               for(var i=0;i<arr.length;i++){
+ //                   var isHave=false;
+//                    var regExpInput=new RegExp(input.value+"+");
+                    //可视化遍历
+//                    setTimeout(function(i){
+//                        return function(){
+//                            if(i === arr.length-1){
+//                                toggle = false;
+//                                //某次遍历结束，初始化toggle，防止用户在遍历过程中再次点击遍历
+
+//                            }
+//                            if(last){
+//                                last.style.background = "#fff"; //使上一次遍历的内容初始化为白色
+//                            }
+//                            arr[i].style.background = "#f00";
+//                           last = arr[i];
+//                       }
+//                    }(i),i*700);
+//                    if(regExpInput.test(arr[i].innerHTML)){
+//                        isHave=true;
+//                        arr[i].style.color='green';
+//                    }
+//                    else{
+//                        arr[i].style.color='black';
+//                    }
+//               isHave?alert("已高亮查找到的内容"):alert("没有搜索到相关内容.");
+        };
+    //绑定按钮
+    btnLeft.onclick=function(){
+        toggle=true;
+        reset();
+        preOrder(wrap);
+        show();
+    };
+    //删除按钮
+    btnDelete.onclick=function(){
+        for(var i=0;i<div.length;i++){
+            if(div[i].style.backgroundColor==="blue"){
+                div[i].outerHTML="";
+            }
+        }
+    };
+
+    //添加按钮
+    btnInter.onclick=function(){
+        for(var i=0;i<div.length;i++){
+            if(div[i].style.backgroundColor==="blue"){
+                node.innerHTML=inter.value;
+                div[i].appendChild(node);
+                node.style.border="1px solid black";
+                node.style.background = "#fff";
+            }
+        }
+    };
+    function reset(){
+        arr = [];
+        if (!last) {
+        } else {
+            last.setAttribute("style", "background:white;");
+        }
+    }
+<!--    点击某个节点元素，则该节点元素呈现一个特殊被选中的样式-->
+<!--   增加一个删除按钮，当选中某个节点元素后，点击删除按钮，则将该节点及其所有子节点删除掉-->
+<!--    增加一个输入框及一个“添加”按钮当选中某个节点元素后，点击增加按钮，则在该节点下增加一个子节点，节点内容为输入框中内容，插入在其子节点的最后一个位置-->
+    //选择某一元素
+    wrap.addEventListener('click',function() {
+        if (event.target.nodeName.toLowerCase() === "div") {
+            event.target.style.backgroundColor = "blue";
+        }
+    });
+
+    //添加
+    //绑定按钮
+</script>
+</body>
+</html>
